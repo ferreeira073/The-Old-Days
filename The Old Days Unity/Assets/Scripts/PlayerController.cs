@@ -7,8 +7,13 @@ public class PlayerController : MonoBehaviour
     public float mouseSensitivity = 100f;
     public Transform playerCamera;
 
+    [Header("Interação")]
+    [Tooltip("Distância máxima para poder interagir com as portas.")]
+    public float interactionDistance = 3f;
+
     float xRotation = 0f;
     CharacterController controller;
+    private IInteractable currentInteractable;
 
     void Start()
     {
@@ -20,6 +25,7 @@ public class PlayerController : MonoBehaviour
     {
         Move();
         Look();
+        CheckInteraction();
     }
 
     void Move()
@@ -70,5 +76,68 @@ public class PlayerController : MonoBehaviour
 
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * mouseX);
+    }
+
+    void CheckInteraction()
+    {
+        Ray ray = new Ray(playerCamera.position, playerCamera.forward);
+        RaycastHit hit;
+        IInteractable interactable = null;
+
+        // Faz o Raycast para a frente da câmara
+        if (Physics.Raycast(ray, out hit, interactionDistance))
+        {
+            // Tenta encontrar um script que implemente IInteractable no objeto atingido (ou nos seus pais)
+            interactable = hit.collider.GetComponentInParent<IInteractable>();
+            if (interactable == null)
+            {
+                interactable = hit.collider.GetComponent<IInteractable>();
+            }
+        }
+
+        // Se mudou o objeto com que podemos interagir
+        if (interactable != currentInteractable)
+        {
+            currentInteractable = interactable;
+            UpdateCrosshair();
+        }
+
+        bool interactPressed = false;
+
+        // Teclado (Tecla E)
+        if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            interactPressed = true;
+        }
+
+        // Comando / Gamepad (Botão Oeste - ex: X na Xbox, Quadrado na PlayStation)
+        if (Gamepad.current != null && Gamepad.current.buttonWest.wasPressedThisFrame)
+        {
+            interactPressed = true;
+        }
+
+        if (interactPressed && currentInteractable != null)
+        {
+            // Ativa a interação do objeto
+            currentInteractable.Interact(transform);
+        }
+    }
+
+    /// <summary>
+    /// Atualiza o estado visual da crosshair com base no objeto focado atualmente.
+    /// </summary>
+    void UpdateCrosshair()
+    {
+        if (CrosshairManager.Instance != null)
+        {
+            if (currentInteractable != null)
+            {
+                CrosshairManager.Instance.ShowInteractable();
+            }
+            else
+            {
+                CrosshairManager.Instance.ShowDefault();
+            }
+        }
     }
 }
