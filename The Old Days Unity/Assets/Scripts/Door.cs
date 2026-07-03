@@ -3,15 +3,28 @@ using UnityEngine;
 
 public class Door : MonoBehaviour, IInteractable
 {
+    public enum DoorFacing
+    {
+        ForwardZ,
+        BackwardZ,
+        RightX,
+        LeftX
+    }
+
     public enum OpeningMode
     {
-        FixedDirection,
-        AwayFromPlayer
+        SwingForward,
+        SwingBackward,
+        FlipUp,
+        FlipDown
     }
 
     [Header("Configurações do Comportamento")]
-    [Tooltip("Escolha se a porta abre sempre para o mesmo lado fixo ou se se afasta do jogador.")]
-    public OpeningMode openingMode = OpeningMode.AwayFromPlayer;
+    [Tooltip("Indica para que lado a face (frente) da porta está virada no seu eixo local.")]
+    public DoorFacing doorFacing = DoorFacing.ForwardZ;
+
+    [Tooltip("Escolha como a porta se abre.")]
+    public OpeningMode openingMode = OpeningMode.SwingForward;
 
     [Tooltip("O ângulo em graus que a porta vai rodar ao abrir.")]
     public float openAngle = 90f;
@@ -50,24 +63,48 @@ public class Door : MonoBehaviour, IInteractable
         else
         {
             // Abre a porta suavemente
+            Vector3 rotationAxis = Vector3.up; // Eixo padrão para swing
             float angle = openAngle;
 
-            if (openingMode == OpeningMode.AwayFromPlayer)
+            if (openingMode == OpeningMode.SwingForward)
             {
-                // Calcula a direção da porta em relação ao jogador
-                Vector3 toPlayer = (playerTransform.position - transform.position).normalized;
-                float dot = Vector3.Dot(transform.forward, toPlayer);
-
-                // Se o jogador estiver à frente da porta (dot > 0), a porta abre no sentido inverso (afasta-se do jogador)
-                // Se estiver atrás (dot <= 0), abre no sentido normal
-                if (dot > 0f)
+                rotationAxis = Vector3.up;
+                angle = openAngle;
+            }
+            else if (openingMode == OpeningMode.SwingBackward)
+            {
+                rotationAxis = Vector3.up;
+                angle = -openAngle;
+            }
+            else // FlipUp ou FlipDown
+            {
+                // Determina o eixo horizontal local com base na direção da face da porta
+                switch (doorFacing)
                 {
-                    angle = -openAngle;
+                    case DoorFacing.ForwardZ:
+                        rotationAxis = Vector3.right; // Eixo X
+                        angle = (openingMode == OpeningMode.FlipUp) ? -openAngle : openAngle;
+                        break;
+
+                    case DoorFacing.BackwardZ:
+                        rotationAxis = Vector3.right; // Eixo X
+                        angle = (openingMode == OpeningMode.FlipUp) ? openAngle : -openAngle;
+                        break;
+
+                    case DoorFacing.RightX:
+                        rotationAxis = Vector3.forward; // Eixo Z
+                        angle = (openingMode == OpeningMode.FlipUp) ? openAngle : -openAngle;
+                        break;
+
+                    case DoorFacing.LeftX:
+                        rotationAxis = Vector3.forward; // Eixo Z
+                        angle = (openingMode == OpeningMode.FlipUp) ? -openAngle : openAngle;
+                        break;
                 }
             }
 
-            // Calcula a rotação alvo com base no ângulo final
-            openRotation = closedRotation * Quaternion.Euler(0f, angle, 0f);
+            // Calcula a rotação alvo com base no eixo e ângulo calculados
+            openRotation = closedRotation * Quaternion.AngleAxis(angle, rotationAxis);
             StartRotation(openRotation);
             isOpen = true;
         }
