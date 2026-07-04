@@ -1,0 +1,65 @@
+# Plano de Implementação: Sistema de Dias e Tempo (Fase 1)
+
+Este plano foca na primeira fase do sistema: configurar o ciclo de dias e a progressão do tempo, permitindo ao jogador avançar o dia ao interagir com a cama.
+
+---
+
+## Detalhes do Sistema de Tempo
+
+1. **Escala de Tempo**: 
+   - 1 hora no jogo = 2 minutos na vida real (120 segundos).
+   - Isto significa que o tempo no jogo avança **30 vezes mais rápido** que o tempo real (Multiplicador = 30).
+     - 1 segundo real = 30 segundos no jogo.
+     - 2 segundos reais = 60 segundos (1 minuto) no jogo.
+     - 120 segundos reais = 60 minutos (1 hora) no jogo.
+2. **Ciclo Diário**:
+   - O dia começa às **08:00** (hora típica de acordar) e progride continuamente.
+   - O jogador não vê o relógio no ecrã (HUD), mas o tempo é logado na consola para fins de depuração (ex: `[Tempo] 09:00`).
+3. **Passagem de Dia (Dormir)**:
+   - Ao interagir com a cama, o dia avança para o próximo (ex: Dia 1 -> Dia 2).
+   - O tempo é reposto para as 08:00 do novo dia.
+   - O jogo tem a duração de **1 semana (7 dias)**. Ao chegar ao fim do 7º dia e dormir, o jogo regista o fim da semana.
+4. **Interface (UI)**:
+   - O dia atual ("Dia 1", "Dia 2", etc.) é apresentado de forma elegante no topo central do ecrã.
+
+---
+
+## Proposed Changes
+
+Os scripts serão colocados na pasta `Assets/Scripts/` ou numa subpasta criada para o efeito.
+
+### [NEW] Scripts do Sistema de Tempo
+
+#### [NEW] [TimeManager.cs](file:///c:/Users/erica/Documents/Exame%20Pap/The-Old-Days/The%20Old%20Days%20Unity/Assets/Scripts/TimeManager.cs)
+O gestor central do tempo e do ciclo semanal.
+- Controla o dia atual (`currentDay`, de 1 a 7) e a hora do jogo.
+- Atualiza o tempo a cada `Update()` usando a velocidade configurada (1 hora de jogo = 2 minutos reais).
+- Envia eventos C# quando a hora muda (para logar na consola) e quando o dia avança (para a UI atualizar).
+- Métodos públicos:
+  - `AdvanceDay()`: Avança o dia, redefine a hora para 08:00 e envia o evento correspondente.
+
+#### [NEW] [BedInteractable.cs](file:///c:/Users/erica/Documents/Exame%20Pap/The-Old-Days/The%20Old%20Days%20Unity/Assets/Scripts/BedInteractable.cs)
+Componente de interação que implementa `IInteractable` para ser adicionado ao GameObject da cama.
+- Ao ser ativado (`Interact`), chama `TimeManager.Instance.AdvanceDay()` para avançar o dia.
+
+#### [NEW] [DayUI.cs](file:///c:/Users/erica/Documents/Exame%20Pap/The-Old-Days/The%20Old%20Days%20Unity/Assets/Scripts/DayUI.cs)
+Controla a interface no topo central do ecrã.
+- Ouve o evento de mudança de dia do `TimeManager`.
+- Atualiza um elemento TextMesh Pro com o texto correspondente (ex: "Dia 1 / 7").
+- Utiliza um design premium (fonte limpa, sombreamento suave, fade-in na mudança de dia).
+
+---
+
+## Verification Plan
+
+### Testes Manuais no Unity Editor
+1. **Passagem do Tempo**:
+   - Iniciar o jogo e verificar na consola do Unity se a hora é logada corretamente (ex: `[Tempo] 08:00`, `[Tempo] 09:00` a cada 2 minutos de tempo real).
+2. **Interface Visual**:
+   - Confirmar se o elemento de texto no topo central do ecrã exibe "Dia 1 / 7" ao iniciar.
+3. **Interação com a Cama (Dormir)**:
+   - Interagir com o GameObject da Cama (pressionando 'E' no teclado ou botão correspondente no comando).
+   - Verificar se o log indica a transição de dia e se a UI atualiza para "Dia 2 / 7".
+   - Confirmar se a hora interna volta às 08:00.
+4. **Fim da Semana**:
+   - Avançar até ao final do Dia 7. Ao interagir para dormir novamente, verificar se o jogo regista o fim do ciclo (ex: carrega o menu principal ou exibe log de conclusão).
