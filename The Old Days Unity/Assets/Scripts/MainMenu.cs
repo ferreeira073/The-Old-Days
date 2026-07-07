@@ -18,6 +18,10 @@ public class MainMenu : MonoBehaviour
     [Tooltip("Painel de Opções (ex: volume, sensibilidade do rato, controlos).")]
     public GameObject optionsPanel;
 
+    [Header("Diálogo de Introdução")]
+    [Tooltip("O gestor do diálogo inicial (ecrã preto) antes do jogo começar.")]
+    [SerializeField] private IntroDialogueManager introDialogueManager;
+
     private void Awake()
     {
         Debug.Log($"[MainMenu] Script MainMenu carregado no GameObject '{gameObject.name}' com sucesso!");
@@ -43,9 +47,24 @@ public class MainMenu : MonoBehaviour
     }
 
     /// <summary>
-    /// Carrega a cena do jogo.
+    /// Carrega a cena do jogo ou inicia o diálogo de introdução caso esteja configurado.
     /// </summary>
     public void PlayGame()
+    {
+        if (introDialogueManager != null)
+        {
+            introDialogueManager.StartIntro(gameSceneName);
+        }
+        else
+        {
+            LoadGameDirectly();
+        }
+    }
+
+    /// <summary>
+    /// Carrega a cena do jogo imediatamente.
+    /// </summary>
+    private void LoadGameDirectly()
     {
         if (!string.IsNullOrEmpty(gameSceneName))
         {
