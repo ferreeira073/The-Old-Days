@@ -76,7 +76,7 @@ public class DayUI : MonoBehaviour
     {
         if (dayText == null) return;
         
-        string newText = $"Dia {day} / {TimeManager.Instance.maxDays}";
+        string newText = $"Day {day} / {TimeManager.Instance.maxDays}";
         
         if (gameObject.activeInHierarchy && fadeDuration > 0f)
         {
@@ -93,7 +93,7 @@ public class DayUI : MonoBehaviour
     {
         if (dayText == null) return;
         
-        string newText = "Semana Concluída";
+        string newText = "Week Completed";
         
         if (gameObject.activeInHierarchy && fadeDuration > 0f)
         {

@@ -47,10 +47,25 @@ public class GameDialogueManager : MonoBehaviour
     [Header("Falas")]
     [SerializeField] private List<DialogueLine> dialogueLines;
 
+    public static GameDialogueManager Instance { get; private set; }
+
     private int currentLineIndex = 0;
     private bool isTyping = false;
     private string activeText = "";
     private Coroutine dialogueCoroutine;
+    private System.Action onDialogueCompleteCallback;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
@@ -66,8 +81,28 @@ public class GameDialogueManager : MonoBehaviour
         else
         {
             if (dialoguePanel != null) dialoguePanel.SetActive(false);
-            Debug.LogWarning("[GameDialogueManager] Nenhuma linha de diálogo configurada no Inspector.");
         }
+    }
+
+    /// <summary>
+    /// Permite disparar um diálogo customizado a partir de outros scripts.
+    /// </summary>
+    public void ShowDialogue(List<DialogueLine> customLines, System.Action callback = null)
+    {
+        if (dialogueCoroutine != null)
+        {
+            StopCoroutine(dialogueCoroutine);
+        }
+
+        onDialogueCompleteCallback = callback;
+        dialogueLines = customLines;
+        
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(true);
+        }
+
+        dialogueCoroutine = StartCoroutine(PlayDialogueRoutine());
     }
 
     private IEnumerator PlayDialogueRoutine()
@@ -100,7 +135,14 @@ public class GameDialogueManager : MonoBehaviour
             dialoguePanel.SetActive(false);
         }
 
-        Debug.Log("[GameDialogueManager] Diálogo de início de jogo concluído com sucesso.");
+        Debug.Log("[GameDialogueManager] Diálogo concluído.");
+
+        if (onDialogueCompleteCallback != null)
+        {
+            System.Action callback = onDialogueCompleteCallback;
+            onDialogueCompleteCallback = null;
+            callback.Invoke();
+        }
     }
 
     private IEnumerator TypeText(string text)
