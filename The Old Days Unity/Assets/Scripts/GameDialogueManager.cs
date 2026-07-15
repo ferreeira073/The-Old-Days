@@ -53,6 +53,7 @@ public class GameDialogueManager : MonoBehaviour
     private bool isTyping = false;
     private string activeText = "";
     private Coroutine dialogueCoroutine;
+    private Coroutine typeTextCoroutine;
     private System.Action onDialogueCompleteCallback;
 
     private void Awake()
@@ -92,6 +93,23 @@ public class GameDialogueManager : MonoBehaviour
         if (dialogueCoroutine != null)
         {
             StopCoroutine(dialogueCoroutine);
+            dialogueCoroutine = null;
+        }
+
+        if (typeTextCoroutine != null)
+        {
+            StopCoroutine(typeTextCoroutine);
+            typeTextCoroutine = null;
+        }
+
+        isTyping = false;
+
+        // Se havia um callback pendente do diálogo anterior, executa-o imediatamente
+        if (onDialogueCompleteCallback != null)
+        {
+            System.Action prevCallback = onDialogueCompleteCallback;
+            onDialogueCompleteCallback = null;
+            prevCallback.Invoke();
         }
 
         onDialogueCompleteCallback = callback;
@@ -121,7 +139,9 @@ public class GameDialogueManager : MonoBehaviour
             }
 
             // Escreve o texto com máquina de escrever
-            yield return StartCoroutine(TypeText(activeText));
+            typeTextCoroutine = StartCoroutine(TypeText(activeText));
+            yield return typeTextCoroutine;
+            typeTextCoroutine = null;
 
             // Espera o tempo de leitura configurado antes de avançar automaticamente
             yield return new WaitForSeconds(displayDurationAfterTyping);

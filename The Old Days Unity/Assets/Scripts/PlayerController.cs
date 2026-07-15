@@ -14,11 +14,20 @@ public class PlayerController : MonoBehaviour
     float xRotation = 0f;
     CharacterController controller;
     private IInteractable currentInteractable;
+    private float initialY;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
+        initialY = transform.position.y;
+
+        // Desativa a possibilidade de subir degraus ou rampas no CharacterController
+        if (controller != null)
+        {
+            controller.stepOffset = 0f;
+            controller.slopeLimit = 0f;
+        }
     }
 
     void Update()
@@ -50,6 +59,11 @@ public class PlayerController : MonoBehaviour
 
         Vector3 move = transform.right * x + transform.forward * z;
         controller.Move(move * speed * Time.deltaTime);
+
+        // Bloqueia a altura (Y) na posição inicial para evitar que o jogador suba degraus ou flutue por colisão
+        Vector3 lockedPosition = transform.position;
+        lockedPosition.y = initialY;
+        transform.position = lockedPosition;
     }
 
     void Look()

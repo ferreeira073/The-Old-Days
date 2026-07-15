@@ -51,6 +51,9 @@ public class TaskManager : MonoBehaviour
     public bool IsListFound => isListFound;
     public List<TaskItem> CurrentDayTasks => currentDayTasks;
 
+    public delegate void TasksInitializedHandler(int day);
+    public event TasksInitializedHandler OnTasksInitialized;
+
     private void Awake()
     {
         if (Instance == null)
@@ -105,16 +108,17 @@ public class TaskManager : MonoBehaviour
             {
                 currentDayTasks.Add(new TaskItem 
                 { 
-                    taskId = task.taskId, 
+                    // Apara espaços em branco antes ou depois para evitar erros de escrita
+                    taskId = !string.IsNullOrEmpty(task.taskId) ? task.taskId.Trim() : "", 
                     description = task.description, 
                     isCompleted = false 
                 });
             }
-            Debug.Log($"[TaskManager] Dia {day} inicializado com {currentDayTasks.Count} tarefas.");
+            Debug.Log($"[TaskManager] Day {day} initialized with {currentDayTasks.Count} tasks.");
         }
         else
         {
-            Debug.LogWarning($"[TaskManager] Nenhuma configuração de tarefas encontrada para o Dia {day}.");
+            Debug.LogWarning($"[TaskManager] No tasks configuration found for Day {day}.");
         }
 
         // Atualiza a interface gráfica
@@ -122,6 +126,8 @@ public class TaskManager : MonoBehaviour
         {
             TaskUI.Instance.UpdateUI();
         }
+
+        OnTasksInitialized?.Invoke(day);
     }
 
     /// <summary>
@@ -151,13 +157,14 @@ public class TaskManager : MonoBehaviour
             return;
         }
 
-        TaskItem task = currentDayTasks.Find(t => t.taskId == taskId);
+        string targetId = !string.IsNullOrEmpty(taskId) ? taskId.Trim() : "";
+        TaskItem task = currentDayTasks.Find(t => string.Equals(t.taskId.Trim(), targetId, System.StringComparison.OrdinalIgnoreCase));
         if (task != null)
         {
             if (!task.isCompleted)
             {
                 task.isCompleted = true;
-                Debug.Log($"[TaskManager] Tarefa concluída: {task.description} (ID: {taskId})");
+                Debug.Log($"[TaskManager] Tarefa concluída: {task.description} (ID: {targetId})");
 
                 if (TaskUI.Instance != null)
                 {
@@ -167,7 +174,13 @@ public class TaskManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"[TaskManager] Tentativa de completar tarefa inexistente para hoje: '{taskId}'");
+            // Adiciona diagnóstico útil no console para o usuário
+            List<string> activeTaskIds = currentDayTasks.ConvertAll(t => t.taskId);
+            string activeTasksString = activeTaskIds.Count > 0 ? string.Join(", ", activeTaskIds) : "None";
+            
+            Debug.LogWarning($"[TaskManager] Tentativa de completar tarefa inexistente para hoje: '{targetId}'.\n" +
+                             $"Tarefas configuradas para o dia atual no TaskManager: [{activeTasksString}].\n" +
+                             $"Verifique se adicionou a tarefa com o ID correto na lista correspondente do TaskManager.");
         }
     }
 
