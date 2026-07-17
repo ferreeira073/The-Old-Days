@@ -27188,6 +27188,67 @@ Transform:
   - {fileID: 623578866}
   m_Father: {fileID: 997987284}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &736296413
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1492681813236552941, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 0e20903d2e20ceb4281a4e6d5cecccb2, type: 2}
+    - target: {fileID: 3041603844628508643, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: m_Name
+      value: Roupa
+      objectReference: {fileID: 0}
+    - target: {fileID: 4228472605458645249, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 17.435108
+      objectReference: {fileID: 0}
+    - target: {fileID: 4228472605458645249, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.1076083
+      objectReference: {fileID: 0}
+    - target: {fileID: 4228472605458645249, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -7.3654766
+      objectReference: {fileID: 0}
+    - target: {fileID: 4228472605458645249, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4228472605458645249, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4228472605458645249, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.0000004768371
+      objectReference: {fileID: 0}
+    - target: {fileID: 4228472605458645249, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4228472605458645249, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4228472605458645249, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4228472605458645249, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1abaa84311ac7db42bc5f1ad4f06ae76, type: 3}
 --- !u!1 &740628424
 GameObject:
   m_ObjectHideFlags: 0
@@ -84280,7 +84341,7 @@ MonoBehaviour:
       description: Explore the house till 9am
       isCompleted: 0
     - taskId: 'collect_clothes '
-      description: "Recolher a roupa e guardar no arm\xE1rio"
+      description: Put the clothes away in the wardrobe.
       isCompleted: 0
   curfewHour: 1
   gameOverSceneName: MainMenu
@@ -97873,3 +97934,4 @@ SceneRoots:
   - {fileID: 1711895454}
   - {fileID: 1074417995}
   - {fileID: 2076715726}
+  - {fileID: 736296413}
