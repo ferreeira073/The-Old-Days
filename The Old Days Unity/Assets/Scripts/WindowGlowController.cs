@@ -23,7 +23,7 @@ public class WindowGlowController : MonoBehaviour
 
     [Header("Ajustes Finos")]
     [Tooltip("Multiplicador da intensidade da emissão do material da janela.")]
-    [SerializeField] private float emissionMultiplier = 1.0f;
+    [SerializeField] private float emissionMultiplier = 1.8f;
 
     [Tooltip("Se ativo, tenta habilitar a palavra-chave _EMISSION no material da janela em tempo de execução.")]
     [SerializeField] private bool forceEmissionKeyword = true;
@@ -127,14 +127,14 @@ public class WindowGlowController : MonoBehaviour
 
         // Criar curva de intensidade correspondente
         glowIntensity = new AnimationCurve(
-            new Keyframe(0.0f, 0.15f),   // Noite
-            new Keyframe(0.20f, 0.15f),  // Antes do amanhecer
-            new Keyframe(0.28f, 0.90f),  // Nascer do sol
-            new Keyframe(0.50f, 1.50f),  // Meio-dia (Pico de luz)
-            new Keyframe(0.70f, 1.20f),  // Tarde
-            new Keyframe(0.78f, 1.00f),  // Pôr do sol
-            new Keyframe(0.85f, 0.15f),  // Pós-pôr do sol
-            new Keyframe(1.0f, 0.15f)    // Noite
+            new Keyframe(0.0f,  0.15f),   // Noite
+            new Keyframe(0.20f, 0.15f),   // Antes do amanhecer
+            new Keyframe(0.28f, 1.50f),   // Nascer do sol
+            new Keyframe(0.50f, 2.50f),   // Meio-dia (Pico de luz)
+            new Keyframe(0.70f, 2.00f),   // Tarde
+            new Keyframe(0.78f, 1.60f),   // Pôr do sol
+            new Keyframe(0.85f, 0.15f),   // Pós-pôr do sol
+            new Keyframe(1.0f,  0.15f)    // Noite
         );
     }
 }

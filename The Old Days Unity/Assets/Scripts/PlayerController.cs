@@ -11,10 +11,26 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Distância máxima para poder interagir com as portas.")]
     public float interactionDistance = 3f;
 
+    [Header("Som de Passos")]
+    [Tooltip("Clips de áudio dos passos. Adiciona vários para variar o som aleatoriamente.")]
+    public AudioClip[] footstepClips;
+
+    [Tooltip("Intervalo (em segundos) entre cada passo.")]
+    [Range(0.1f, 1f)]
+    public float footstepInterval = 0.45f;
+
+    [Tooltip("Volume dos passos (0 a 1).")]
+    [Range(0f, 1f)]
+    public float footstepVolume = 0.6f;
+
     float xRotation = 0f;
     CharacterController controller;
     private IInteractable currentInteractable;
     private float initialY;
+
+    // --- Passos ---
+    private AudioSource _footstepSource;
+    private float _footstepTimer = 0f;
 
     void Start()
     {
@@ -28,6 +44,15 @@ public class PlayerController : MonoBehaviour
             controller.stepOffset = 0f;
             controller.slopeLimit = 0f;
         }
+
+        // Cria ou obtém o AudioSource dedicado aos passos
+        _footstepSource = GetComponent<AudioSource>();
+        if (_footstepSource == null)
+            _footstepSource = gameObject.AddComponent<AudioSource>();
+
+        _footstepSource.playOnAwake = false;
+        _footstepSource.spatialBlend = 0f; // Som 2D (sem áudio espacial)
+        _footstepSource.volume      = footstepVolume;
     }
 
     void Update()
@@ -57,6 +82,8 @@ public class PlayerController : MonoBehaviour
         x = Mathf.Clamp(x, -1f, 1f);
         z = Mathf.Clamp(z, -1f, 1f);
 
+        bool isMoving = (x != 0f || z != 0f);
+
         Vector3 move = transform.right * x + transform.forward * z;
         controller.Move(move * speed * Time.deltaTime);
 
@@ -64,6 +91,32 @@ public class PlayerController : MonoBehaviour
         Vector3 lockedPosition = transform.position;
         lockedPosition.y = initialY;
         transform.position = lockedPosition;
+
+        // --- Passos ---
+        HandleFootsteps(isMoving);
+    }
+
+    /// <summary>
+    /// Toca sons de passos enquanto o jogador se move, com um intervalo fixo entre cada passo.
+    /// </summary>
+    void HandleFootsteps(bool isMoving)
+    {
+        if (!isMoving || footstepClips == null || footstepClips.Length == 0)
+        {
+            // Jogador parado: reinicia o timer para que o próximo passo não salte logo
+            _footstepTimer = footstepInterval;
+            return;
+        }
+
+        _footstepTimer -= Time.deltaTime;
+
+        if (_footstepTimer <= 0f)
+        {
+            // Escolhe um clip aleatório da lista (evita repetir o mesmo)
+            AudioClip clip = footstepClips[Random.Range(0, footstepClips.Length)];
+            _footstepSource.PlayOneShot(clip, footstepVolume);
+            _footstepTimer = footstepInterval;
+        }
     }
 
     void Look()

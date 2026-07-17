@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
@@ -21,6 +22,10 @@ public class MainMenu : MonoBehaviour
     [Header("Diálogo de Introdução")]
     [Tooltip("O gestor do diálogo inicial (ecrã preto) antes do jogo começar.")]
     [SerializeField] private IntroDialogueManager introDialogueManager;
+
+    [Header("Música de Fundo")]
+    [Tooltip("Referência ao script MainMenuMusic (no GameObject com AudioSource). Deixa vazio se não houver música.")]
+    [SerializeField] private MainMenuMusic mainMenuMusic;
 
     private void Awake()
     {
@@ -50,6 +55,32 @@ public class MainMenu : MonoBehaviour
     /// Carrega a cena do jogo ou inicia o diálogo de introdução caso esteja configurado.
     /// </summary>
     public void PlayGame()
+    {
+        // Inicia a transição com fade-out da música, se existir
+        if (mainMenuMusic != null)
+        {
+            StartCoroutine(PlayGameWithFadeOut());
+        }
+        else
+        {
+            StartGameLogic();
+        }
+    }
+
+    /// <summary>
+    /// Aguarda o fade-out da música e depois inicia o jogo.
+    /// </summary>
+    private IEnumerator PlayGameWithFadeOut()
+    {
+        float fadeDuration = mainMenuMusic.StopWithFadeOut();
+        yield return new WaitForSeconds(fadeDuration);
+        StartGameLogic();
+    }
+
+    /// <summary>
+    /// Lógica central de início do jogo (com ou sem diálogo de introdução).
+    /// </summary>
+    private void StartGameLogic()
     {
         if (introDialogueManager != null)
         {

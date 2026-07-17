@@ -2734,7 +2734,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 314, y: -79.19}
+  m_AnchoredPosition: {x: 314, y: -60}
   m_SizeDelta: {x: 280.7, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &661334167
@@ -2757,7 +2757,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sair
+  m_text: Exit
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3508,8 +3508,8 @@ Transform:
   m_GameObject: {fileID: 776133917}
   serializedVersion: 2
   m_LocalRotation: {x: -0.2588186, y: -0, z: -0, w: 0.965926}
-  m_LocalPosition: {x: 3.86, y: 6.969697, z: -0.27539396}
-  m_LocalScale: {x: 0.7102373, y: 0.5, z: 10.1103735}
+  m_LocalPosition: {x: 8.067501, y: 6.969697, z: -0.27539396}
+  m_LocalScale: {x: 9.125271, y: 0.5, z: 10.1103735}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1109406538}
@@ -5715,8 +5715,8 @@ Transform:
   m_GameObject: {fileID: 1252776874}
   serializedVersion: 2
   m_LocalRotation: {x: 0.2588195, y: -0, z: -0, w: 0.96592575}
-  m_LocalPosition: {x: 3.8899994, y: 6.961035, z: 8.489557}
-  m_LocalScale: {x: 0.77032363, y: 0.5, z: 10.410286}
+  m_LocalPosition: {x: 8.1325, y: 6.961035, z: 8.489557}
+  m_LocalScale: {x: 9.255362, y: 0.5, z: 10.410286}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1109406538}
@@ -7442,7 +7442,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 314, y: -241}
-  m_SizeDelta: {x: 1190, y: 482}
+  m_SizeDelta: {x: 1190, y: 716.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1637888218
 MonoBehaviour:
@@ -9266,7 +9266,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 314, y: 44}
+  m_AnchoredPosition: {x: 314, y: 60}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1931815736
@@ -9289,7 +9289,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Jogar
+  m_text: 'Play
 
 '
   m_isRightToLeft: 0
@@ -10002,6 +10002,8 @@ GameObject:
   - component: {fileID: 2095862155}
   - component: {fileID: 2095862158}
   - component: {fileID: 2095862159}
+  - component: {fileID: 2095862161}
+  - component: {fileID: 2095862160}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -10085,6 +10087,7 @@ MonoBehaviour:
   gameSceneName: Scene
   optionsPanel: {fileID: 1146406710}
   introDialogueManager: {fileID: 2095862159}
+  mainMenuMusic: {fileID: 2095862160}
 --- !u!114 &2095862159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10105,26 +10108,156 @@ MonoBehaviour:
   commaPauseTime: 0.2
   punctuationPauseTime: 0.25
   dialogueLines:
-  - speakerName: '"?"'
-    textLine: 'Mom...We''re going out all week. '
-  - speakerName: '"You"'
-    textLine: Okay, I can stay and take care of the house.
-  - speakerName: '"?"'
-    textLine: I will call Anna to check on you...
-  - speakerName: '"You"'
-    textLine: There is no need.
-  - speakerName: '"?"'
-    textLine: Mom... you have 90 years old.
-  - speakerName: '"You"'
-    textLine: No need.
-  - speakerName: '"?"'
+  - speakerName: Daughter
+    textLine: Mom... we're going to be away for the whole week.
+  - speakerName: Margaret
+    textLine: Alright.
+  - speakerName: Daughter
+    textLine: I asked Anna to stop by and check on you..
+  - speakerName: Margaret
+    textLine: You didn't have to.
+  - speakerName: Daughter
+    textLine: I just wanted to make sure you're okay.
+  - speakerName: Margaret
+    textLine: I've been looking after myself longer than you've been alive.
+  - speakerName: Daughter
+    textLine: Mom... you're ninety.
+  - speakerName: Margaret
+    textLine: And?
+  - speakerName: Daughter
     textLine: I'll call you every day.
-  - speakerName: '"You"'
-    textLine: You don't have to. Just enjoy your trip.
+  - speakerName: Margaret
+    textLine: Don't make a habit of it.
+  - speakerName: Daughter
+    textLine: ...Fine. Just answer the phone, okay?
+  - speakerName: Daughter
+    textLine: We'll be back next week
+  - speakerName: Margaret
+    textLine: Then stop standing around and go enjoy your trip.
+  - speakerName: Daughter
+    textLine: See you next week Mom!
   - speakerName: 
     textLine: ...
-  - speakerName: 
-    textLine: '*when did she said they were leaving again?*'
+  - speakerName: Margaret
+    textLine: ...Do they really think I'm that helpless?
+  blackScreenWaitTime: 2
+  introMusicClip: {fileID: 8300000, guid: e01560b934b605949887c55f5da9fd34, type: 3}
+  introMusicVolume: 0.5
+  introMusicFadeIn: 1.5
+  introMusicFadeOut: 1.5
+--- !u!114 &2095862160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095862153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcf74d08301727b4da2bf10ad3bba4c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainMenuMusic
+  musicClip: {fileID: 8300000, guid: d0b68b194e3470d4faf2213564638333, type: 3}
+  fadeInDuration: 3
+  fadeOutDuration: 1.5
+  defaultVolume: 0.2
+--- !u!82 &2095862161
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095862153}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2111088956
 GameObject:
   m_ObjectHideFlags: 0
@@ -10272,7 +10405,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 314, y: -15}
+  m_AnchoredPosition: {x: 314, y: 0}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2128602792
@@ -10295,7 +10428,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Op\xE7\xF5es"
+  m_text: Options
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -10734,14 +10867,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5721709468605018867}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: -0, y: 0.6087613, z: -0, w: 0.7933535}
   m_LocalPosition: {x: -9.85, y: 1.66, z: 1.68}
   m_LocalScale: {x: 1, y: 1.66, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 651771906809103451}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 75, z: 0}
 --- !u!20 &8397111893275776224
 Camera:
   m_ObjectHideFlags: 0

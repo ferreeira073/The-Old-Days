@@ -36,14 +36,35 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private bool isOpen = false;
     private bool isRotating = false;
 
+    [Header("Sons")]
+    [Tooltip("Som tocado ao abrir a porta.")]
+    public AudioClip openSound;
+
+    [Tooltip("Som tocado ao fechar a porta.")]
+    public AudioClip closeSound;
+
+    [Tooltip("Volume dos sons da porta (0 a 1).")]
+    [Range(0f, 1f)]
+    public float doorVolume = 0.8f;
+
     private Quaternion closedRotation;
     private Quaternion openRotation;
     private Coroutine rotateCoroutine;
+    private AudioSource _audioSource;
 
     void Start()
     {
         // Guarda a rotação original da porta fechada
         closedRotation = transform.localRotation;
+
+        // Cria ou obtém o AudioSource da porta
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+            _audioSource = gameObject.AddComponent<AudioSource>();
+
+        _audioSource.playOnAwake  = false;
+        _audioSource.spatialBlend = 1f; // Som 3D (vem da posição da porta no mundo)
+        _audioSource.volume       = doorVolume;
     }
 
     /// <summary>
@@ -57,12 +78,14 @@ public class Door : MonoBehaviour, IInteractable
         if (isOpen)
         {
             // Fecha a porta suavemente para a posição original
+            PlayDoorSound(closeSound);
             StartRotation(closedRotation);
             isOpen = false;
         }
         else
         {
             // Abre a porta suavemente
+            PlayDoorSound(openSound);
             Vector3 rotationAxis = Vector3.up; // Eixo padrão para swing
             float angle = openAngle;
 
@@ -133,5 +156,16 @@ public class Door : MonoBehaviour, IInteractable
         // Garante que fica exatamente na rotação alvo
         transform.localRotation = targetRotation;
         isRotating = false;
+    }
+
+    /// <summary>
+    /// Toca um clip de áudio da porta, se estiver definido.
+    /// </summary>
+    private void PlayDoorSound(AudioClip clip)
+    {
+        if (clip != null && _audioSource != null)
+        {
+            _audioSource.PlayOneShot(clip, doorVolume);
+        }
     }
 }

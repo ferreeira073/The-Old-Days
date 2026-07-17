@@ -27,27 +27,51 @@ public class IntroDialogueManager : MonoBehaviour
     [SerializeField] private TMP_Text continueHintText;
 
     [Header("Configurações de Velocidade (Estilo Undertale)")]
-    
+
     [Tooltip("Letras geradas por segundo. Undertale roda entre 30 a 60. Se meteres 90+, é incrivelmente rápido.")]
-    [SerializeField] private float charactersPerSecond = 60f; 
+    [SerializeField] private float charactersPerSecond = 120f;
 
     [Tooltip("Pausa exata (em segundos) numa vírgula.")]
-    [SerializeField] private float commaPauseTime = 0.1f; 
+    [SerializeField] private float commaPauseTime = 0.04f;
 
     [Tooltip("Pausa exata (em segundos) num ponto final, ! ou ?")]
-    [SerializeField] private float punctuationPauseTime = 0.25f;
+    [SerializeField] private float punctuationPauseTime = 0.08f;
 
     [Header("Falas")]
     [SerializeField] private List<DialogueLine> dialogueLines;
+
+    [Header("Tempo de Espera Inicial")]
+    [Tooltip("Segundos de espera no ecrã preto antes de o diálogo começar.")]
+    [SerializeField] private float blackScreenWaitTime = 2f;
+
+    [Header("Música da Intro")]
+    [Tooltip("Clip de áudio a tocar durante a intro (diferente da música do menu).")]
+    [SerializeField] private AudioClip introMusicClip;
+
+    [Tooltip("Volume da música da intro (0 a 1).")]
+    [Range(0f, 1f)]
+    [SerializeField] private float introMusicVolume = 0.5f;
+
+    [Tooltip("Duração do fade-in da música da intro (em segundos).")]
+    [Range(0f, 5f)]
+    [SerializeField] private float introMusicFadeIn = 1.5f;
+
+    [Tooltip("Duração do fade-out da música da intro quando a cena carrega (em segundos).")]
+    [Range(0f, 5f)]
+    [SerializeField] private float introMusicFadeOut = 1.5f;
 
     private int currentLineIndex = 0;
     private string targetSceneName;
     private bool isTyping = false;
     private string activeText = "";
-    private string lastSpeakerName = ""; 
-    
+    private string lastSpeakerName = "";
+
     private Coroutine typingCoroutine;
     private bool introStarted = false;
+
+    // AudioSource criado dinamicamente para a música da intro
+    private AudioSource _introAudioSource;
+    private Coroutine _introMusicFadeCoroutine;
 
     private void Start()
     {
@@ -55,19 +79,55 @@ public class IntroDialogueManager : MonoBehaviour
         if (continueHintText != null) continueHintText.gameObject.SetActive(false);
         if (dialogueText != null) dialogueText.text = "";
         if (speakerNameText != null) speakerNameText.text = "";
+
+        // Cria o AudioSource para a música da intro (separado do resto)
+        _introAudioSource = gameObject.AddComponent<AudioSource>();
+        _introAudioSource.loop        = true;
+        _introAudioSource.playOnAwake = false;
+        _introAudioSource.volume      = 0f;
+        _introAudioSource.clip        = introMusicClip;
     }
 
     public void StartIntro(string sceneToLoad)
     {
         targetSceneName = sceneToLoad;
-        introStarted = true;
+        introStarted = false; // Só ficará true depois da espera inicial
         currentLineIndex = 0;
         lastSpeakerName = "";
 
         if (blackScreenPanel != null) blackScreenPanel.SetActive(true);
         if (continueHintText != null) continueHintText.gameObject.SetActive(false);
+        if (dialogueText != null) dialogueText.text = "";
+        if (speakerNameText != null) speakerNameText.text = "";
 
-        // O texto arranca SEM esperas no ecrã preto. Rápido e direto.
+        StartCoroutine(IntroSequence());
+    }
+
+    /// <summary>
+    /// Sequência completa da intro:
+    /// 1. Inicia música da intro com fade-in
+    /// 2. Aguarda o tempo no ecrã preto
+    /// 3. Começa o diálogo
+    /// </summary>
+    private IEnumerator IntroSequence()
+    {
+        // --- Música da intro ---
+        if (introMusicClip != null)
+        {
+            _introAudioSource.clip   = introMusicClip;
+            _introAudioSource.volume = 0f;
+            _introAudioSource.Play();
+
+            if (_introMusicFadeCoroutine != null) StopCoroutine(_introMusicFadeCoroutine);
+            _introMusicFadeCoroutine = StartCoroutine(FadeIntroMusic(introMusicVolume, introMusicFadeIn));
+        }
+
+        // --- Tempo de espera no ecrã preto ---
+        if (blackScreenWaitTime > 0f)
+            yield return new WaitForSeconds(blackScreenWaitTime);
+
+        // --- Arranca o diálogo ---
+        introStarted = true;
         DisplayNextLine();
     }
 
@@ -185,9 +245,51 @@ public class IntroDialogueManager : MonoBehaviour
     private void EndIntro()
     {
         introStarted = false;
+        StartCoroutine(EndIntroWithFadeOut());
+    }
+
+    /// <summary>
+    /// Faz fade-out da música da intro e depois carrega a cena.
+    /// </summary>
+    private IEnumerator EndIntroWithFadeOut()
+    {
+        if (introMusicClip != null && _introAudioSource.isPlaying && introMusicFadeOut > 0f)
+        {
+            if (_introMusicFadeCoroutine != null) StopCoroutine(_introMusicFadeCoroutine);
+            _introMusicFadeCoroutine = StartCoroutine(FadeIntroMusic(0f, introMusicFadeOut));
+            yield return new WaitForSeconds(introMusicFadeOut);
+            _introAudioSource.Stop();
+        }
+
         if (!string.IsNullOrEmpty(targetSceneName) && Application.CanStreamedLevelBeLoaded(targetSceneName))
         {
             SceneManager.LoadScene(targetSceneName);
         }
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Fade da Música da Intro
+    // ──────────────────────────────────────────────────────────────
+
+    private IEnumerator FadeIntroMusic(float targetVolume, float duration)
+    {
+        if (duration <= 0f)
+        {
+            _introAudioSource.volume = targetVolume;
+            yield break;
+        }
+
+        float startVolume = _introAudioSource.volume;
+        float elapsed     = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            _introAudioSource.volume = Mathf.Lerp(startVolume, targetVolume, elapsed / duration);
+            yield return null;
+        }
+
+        _introAudioSource.volume = targetVolume;
+        _introMusicFadeCoroutine = null;
     }
 }
