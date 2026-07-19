@@ -47,7 +47,7 @@ public class TaskListInteractable : MonoBehaviour, IInteractable
             else
             {
                 // Fallback caso não haja um GameDialogueManager na cena
-                Debug.LogWarning("[TaskListInteractable] GameDialogueManager não foi encontrado na cena! Ativando as tarefas diretamente.");
+                Debug.LogWarning("[TaskListInteractable] GameDialogueManager not found in the scene! Activating tasks directly.");
                 TaskManager.Instance.OnListFound();
             }
         }

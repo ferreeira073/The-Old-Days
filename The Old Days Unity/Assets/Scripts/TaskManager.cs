@@ -77,7 +77,7 @@ public class TaskManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[TaskManager] TimeManager não encontrado na cena! Usando o Dia 1 por defeito.");
+            Debug.LogWarning("[TaskManager] TimeManager not found in the scene! Using Day 1 by default.");
             InitializeDay(1);
         }
     }
@@ -136,7 +136,7 @@ public class TaskManager : MonoBehaviour
     public void OnListFound()
     {
         isListFound = true;
-        Debug.Log("[TaskManager] A lista de tarefas foi encontrada! UI de tarefas ativada.");
+        Debug.Log("[TaskManager] The task list has been found! Task UI activated.");
 
         if (TaskUI.Instance != null)
         {
@@ -153,7 +153,7 @@ public class TaskManager : MonoBehaviour
         // O jogador não pode concluir tarefas sem antes encontrar a lista física!
         if (!isListFound)
         {
-            Debug.LogWarning($"[TaskManager] Tentativa de completar a tarefa '{taskId}' falhou. O jogador ainda não encontrou a lista de tarefas física!");
+            Debug.LogWarning($"[TaskManager] Attempting to complete task '{taskId}' failed. The player has not yet found the physical task list!");
             return;
         }
 
@@ -164,7 +164,7 @@ public class TaskManager : MonoBehaviour
             if (!task.isCompleted)
             {
                 task.isCompleted = true;
-                Debug.Log($"[TaskManager] Tarefa concluída: {task.description} (ID: {targetId})");
+                Debug.Log($"[TaskManager] Task completed: {task.description} (ID: {targetId})");
 
                 if (TaskUI.Instance != null)
                 {
@@ -178,9 +178,9 @@ public class TaskManager : MonoBehaviour
             List<string> activeTaskIds = currentDayTasks.ConvertAll(t => t.taskId);
             string activeTasksString = activeTaskIds.Count > 0 ? string.Join(", ", activeTaskIds) : "None";
             
-            Debug.LogWarning($"[TaskManager] Tentativa de completar tarefa inexistente para hoje: '{targetId}'.\n" +
-                             $"Tarefas configuradas para o dia atual no TaskManager: [{activeTasksString}].\n" +
-                             $"Verifique se adicionou a tarefa com o ID correto na lista correspondente do TaskManager.");
+            Debug.LogWarning($"[TaskManager] Attempting to complete a non-existent task for today: '{targetId}'.\n" +
+                             $"Tasks configured for the current day in the TaskManager: [{activeTasksString}].\n" +
+                             $"Please check if you have added the task with the correct ID to the corresponding list in the TaskManager.");
         }
     }
 
@@ -227,7 +227,7 @@ public class TaskManager : MonoBehaviour
     /// </summary>
     private void TriggerGameOver()
     {
-        Debug.LogWarning("[TaskManager] FIM DE TEMPO! O jogador falhou em realizar as tarefas de hoje e perdeu o jogo.");
+        Debug.LogWarning("[TaskManager] TIME'S UP! The player failed to complete today's tasks and lost the game.");
         
         // Garante que o cursor é libertado para o menu
         Cursor.lockState = CursorLockMode.None;
@@ -239,7 +239,7 @@ public class TaskManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"[TaskManager] Não foi possível carregar a cena de Game Over '{gameOverSceneName}'. Certifique-se de que está nas Build Settings.");
+            Debug.LogError($"[TaskManager] Unable to load the Game Over scene '{gameOverSceneName}'. Ensure it is added to the Build Settings.");
         }
     }
 }

@@ -134,7 +134,7 @@ public class TaskListManager : MonoBehaviour
             // Desenha um raio vermelho na vista Scene do Unity para ajudar a localizar visualmente onde o objeto apareceu
             Debug.DrawRay(activeListInstance.transform.position, Vector3.up * 10f, Color.red, 15f);
 
-            Debug.Log($"[Tarefas] Lista posicionada com sucesso em: '{targetSpawn.name}' na posição {activeListInstance.transform.position}. (Linha vertical vermelha desenhada na vista Scene para depuração).");
+            Debug.Log($"[Tarefas] List positioned successfully at: '{targetSpawn.name}' at position {activeListInstance.transform.position}. (Red vertical line drawn in the Scene view for debugging).");
         }
     }
 }

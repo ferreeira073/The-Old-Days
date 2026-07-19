@@ -87,7 +87,7 @@ public class TaskUI : MonoBehaviour
         // Objetivo Extra: Se todas as tarefas estiverem feitas, instrui o jogador a ir dormir
         if (allCompleted)
         {
-            displayText += "<color=cyan>[] Go to sleep</color>";
+            displayText += "Go to sleep";
 
         }
 
