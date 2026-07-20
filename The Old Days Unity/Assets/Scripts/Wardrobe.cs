@@ -17,6 +17,7 @@ public class Wardrobe : MonoBehaviour, IInteractable
 
     private int placedCount = 0;
     private List<GameObject> placedClothes = new List<GameObject>();
+    private bool hasShownPlaceDialogue = false;
 
     private void Start()
     {
@@ -96,7 +97,11 @@ public class Wardrobe : MonoBehaviour, IInteractable
 
         placedClothes.Add(placedPiece);
         placedCount++;
-        ShowFeedbackDialogue("Placed the clothing item in the wardrobe.");
+        if (!hasShownPlaceDialogue)
+        {
+            hasShownPlaceDialogue = true;
+            ShowFeedbackDialogue("Placed the clothing item in the wardrobe.");
+        }
 
         // 3. Verifica se a tarefa foi completamente concluída
         CheckTaskCompletion();

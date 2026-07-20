@@ -52,6 +52,7 @@ public class LaundryBasket : MonoBehaviour, IInteractable
     private List<GameObject> outsideClothes = new List<GameObject>();
     private bool isHoldingClothes = false;
     private Color heldColor;
+    private bool hasShownPickUpDialogue = false;
 
     public bool IsHoldingClothes => isHoldingClothes;
     public Color HeldColor => heldColor;
@@ -280,7 +281,11 @@ public class LaundryBasket : MonoBehaviour, IInteractable
             clothesColors.RemoveAt(lastIndex);
 
             isHoldingClothes = true;
-            ShowFeedbackDialogue("Picked up a piece of clothing. I need to place it in the wardrobe.");
+            if (!hasShownPickUpDialogue)
+            {
+                hasShownPickUpDialogue = true;
+                ShowFeedbackDialogue("Picked up a piece of clothing. I need to place it in the wardrobe.");
+            }
         }
         else
         {

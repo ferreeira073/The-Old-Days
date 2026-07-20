@@ -40,11 +40,17 @@ public class TimeManager : MonoBehaviour
     public delegate void WeekEndedHandler();
     public event WeekEndedHandler OnWeekEnded;
 
+    public delegate void WeekFailedHandler();
+    public event WeekFailedHandler OnWeekFailed;
+
+    private bool weekFailed = false;
+
     // Propriedades de Acesso
     public int CurrentDay => currentDay;
     public int CurrentHour => currentHour;
     public int CurrentMinute => currentMinute;
     public bool IsWeekFinished => currentDay > maxDays;
+    public bool IsWeekFailed => weekFailed;
 
     private void Awake()
     {
@@ -72,7 +78,7 @@ public class TimeManager : MonoBehaviour
 
     private void Update()
     {
-        if (IsWeekFinished) return;
+        if (IsWeekFinished || weekFailed) return;
 
         // Progressão do tempo
         timeAccumulator += Time.deltaTime;
@@ -140,5 +146,17 @@ public class TimeManager : MonoBehaviour
     {
         string header = newDayStarted ? $"--- INÍCIO DO DIA {currentDay} ---" : "[Tempo]";
         Debug.Log($"{header} Hora Atual no Jogo: {currentHour:D2}:{currentMinute:D2}");
+    }
+
+    /// <summary>
+    /// Desencadeia a condição de semana falhada (chamado pelo TaskManager quando o curfew passa).
+    /// Para o tempo e dispara o evento OnWeekFailed.
+    /// </summary>
+    public void TriggerWeekFailed()
+    {
+        if (weekFailed || IsWeekFinished) return;
+        weekFailed = true;
+        Debug.LogWarning("[Tempo] Semana falhada! O jogador não completou as tarefas a tempo.");
+        OnWeekFailed?.Invoke();
     }
 }

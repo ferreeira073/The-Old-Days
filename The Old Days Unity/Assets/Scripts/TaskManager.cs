@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Gere o ciclo de vida das tarefas diárias, o estado de descoberta da lista de tarefas,
@@ -40,9 +39,6 @@ public class TaskManager : MonoBehaviour
 
     [Tooltip("Hora limite do dia em que o jogador perde se não terminar as tarefas (ex: 3 correspondente a 03:00 AM).")]
     [SerializeField] private int curfewHour = 3;
-
-    [Tooltip("Nome da cena a carregar quando o jogador perde (normalmente o Menu Principal).")]
-    [SerializeField] private string gameOverSceneName = "MainMenu";
 
     [Header("Estado Atual (Apenas Leitura no Editor)")]
     [SerializeField] private bool isListFound = false;
@@ -223,23 +219,16 @@ public class TaskManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Lida com a condição de derrota e carrega a cena definida.
+    /// Delega a condição de derrota ao TimeManager, que dispara o evento OnWeekFailed
+    /// para que a UI mostre "Week Failed" e feche o jogo após 3 segundos.
     /// </summary>
     private void TriggerGameOver()
     {
-        Debug.LogWarning("[TaskManager] TIME'S UP! The player failed to complete today's tasks and lost the game.");
-        
-        // Garante que o cursor é libertado para o menu
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        Debug.LogWarning("[TaskManager] TEMPO ESGOTADO! O jogador falhou as tarefas de hoje.");
 
-        if (Application.CanStreamedLevelBeLoaded(gameOverSceneName))
+        if (TimeManager.Instance != null)
         {
-            SceneManager.LoadScene(gameOverSceneName);
-        }
-        else
-        {
-            Debug.LogError($"[TaskManager] Unable to load the Game Over scene '{gameOverSceneName}'. Ensure it is added to the Build Settings.");
+            TimeManager.Instance.TriggerWeekFailed();
         }
     }
 }

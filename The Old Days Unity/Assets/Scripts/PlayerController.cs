@@ -32,6 +32,11 @@ public class PlayerController : MonoBehaviour
     private AudioSource _footstepSource;
     private float _footstepTimer = 0f;
 
+    /// <summary>
+    /// Quando false, todos os inputs do jogador (movimento, câmara, interação) ficam bloqueados.
+    /// </summary>
+    public bool IsControlEnabled = true;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -57,6 +62,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (!IsControlEnabled) return;
         Move();
         Look();
         CheckInteraction();
@@ -205,6 +211,23 @@ public class PlayerController : MonoBehaviour
             {
                 CrosshairManager.Instance.ShowDefault();
             }
+        }
+    }
+
+    /// <summary>
+    /// Repõe a rotação vertical da câmara e roda o corpo do jogador horizontalmente.
+    /// Útil para o acordar a olhar na direção oposta.
+    /// </summary>
+    public void ResetCameraRotation(float horizontalOffsetDegrees)
+    {
+        // Roda o corpo do jogador horizontalmente (eixo Y)
+        transform.Rotate(0f, horizontalOffsetDegrees, 0f);
+
+        // Repõe a rotação vertical (eixo X)
+        xRotation = 0f;
+        if (playerCamera != null)
+        {
+            playerCamera.localRotation = Quaternion.Euler(0f, 0f, 0f);
         }
     }
 }

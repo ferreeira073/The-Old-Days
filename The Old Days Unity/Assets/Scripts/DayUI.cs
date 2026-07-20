@@ -15,6 +15,9 @@ public class DayUI : MonoBehaviour
     [Tooltip("Duração do efeito de fade-out e fade-in ao mudar de dia.")]
     [SerializeField] private float fadeDuration = 0.4f;
 
+    [Tooltip("Segundos de espera antes de fechar o jogo após o fim da semana.")]
+    [SerializeField] private float quitDelay = 3f;
+
     private Coroutine fadeCoroutine;
 
     private void Awake()
@@ -58,8 +61,11 @@ public class DayUI : MonoBehaviour
             TimeManager.Instance.OnDayChanged -= UpdateDayText;
             TimeManager.Instance.OnDayChanged += UpdateDayText;
 
-            TimeManager.Instance.OnWeekEnded -= DisplayEndOfWeek;
-            TimeManager.Instance.OnWeekEnded += DisplayEndOfWeek;
+            TimeManager.Instance.OnWeekEnded -= DisplayWeekComplete;
+            TimeManager.Instance.OnWeekEnded += DisplayWeekComplete;
+
+            TimeManager.Instance.OnWeekFailed -= DisplayWeekFailed;
+            TimeManager.Instance.OnWeekFailed += DisplayWeekFailed;
         }
     }
 
@@ -68,7 +74,8 @@ public class DayUI : MonoBehaviour
         if (TimeManager.Instance != null)
         {
             TimeManager.Instance.OnDayChanged -= UpdateDayText;
-            TimeManager.Instance.OnWeekEnded -= DisplayEndOfWeek;
+            TimeManager.Instance.OnWeekEnded -= DisplayWeekComplete;
+            TimeManager.Instance.OnWeekFailed -= DisplayWeekFailed;
         }
     }
 
@@ -81,32 +88,86 @@ public class DayUI : MonoBehaviour
         if (gameObject.activeInHierarchy && fadeDuration > 0f)
         {
             if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-            fadeCoroutine = StartCoroutine(FadeTextRoutine(newText));
+            fadeCoroutine = StartCoroutine(FadeTextRoutine(newText, Color.white));
         }
         else
         {
             dayText.text = newText;
+            dayText.color = Color.white;
         }
     }
 
-    private void DisplayEndOfWeek()
+    private void DisplayWeekComplete()
     {
         if (dayText == null) return;
         
-        string newText = "Week Completed";
-        
+        FreezePlayer();
+
         if (gameObject.activeInHierarchy && fadeDuration > 0f)
         {
             if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-            fadeCoroutine = StartCoroutine(FadeTextRoutine(newText));
+            fadeCoroutine = StartCoroutine(FadeTextRoutine("Week Complete", Color.white));
         }
         else
         {
-            dayText.text = newText;
+            dayText.text = "Week Complete";
+            dayText.color = Color.white;
         }
+
+        StartCoroutine(QuitAfterDelay());
     }
 
-    private IEnumerator FadeTextRoutine(string targetText)
+    private void DisplayWeekFailed()
+    {
+        if (dayText == null) return;
+
+        FreezePlayer();
+
+        if (gameObject.activeInHierarchy && fadeDuration > 0f)
+        {
+            if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+            fadeCoroutine = StartCoroutine(FadeTextRoutine("Week Failed", Color.red));
+        }
+        else
+        {
+            dayText.text = "Week Failed";
+            dayText.color = Color.red;
+        }
+
+        StartCoroutine(QuitAfterDelay());
+    }
+
+    /// <summary>
+    /// Bloqueia os controlos do jogador na cena atual.
+    /// </summary>
+    private void FreezePlayer()
+    {
+        PlayerController player = FindObjectOfType<PlayerController>();
+        if (player != null)
+        {
+            player.IsControlEnabled = false;
+        }
+
+        // Liberta o cursor para não ficar preso
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    /// <summary>
+    /// Espera <see cref="quitDelay"/> segundos e depois fecha o jogo.
+    /// </summary>
+    private IEnumerator QuitAfterDelay()
+    {
+        yield return new WaitForSeconds(quitDelay);
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
+    private IEnumerator FadeTextRoutine(string targetText, Color targetColor)
     {
         // Fade out (desaparece)
         float elapsed = 0f;
@@ -119,8 +180,9 @@ public class DayUI : MonoBehaviour
         }
         canvasGroup.alpha = 0f;
 
-        // Atualiza o conteúdo do texto
+        // Atualiza o conteúdo e a cor do texto
         dayText.text = targetText;
+        dayText.color = targetColor;
 
         // Fade in (aparece)
         elapsed = 0f;
